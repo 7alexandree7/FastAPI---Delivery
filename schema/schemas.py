@@ -12,6 +12,14 @@ class UserSchema(BaseModel):
         "from_attributes": True
     }
 
+class LoginSchema(BaseModel):
+    email: str
+    password: str
+
+    model_config = {
+        "from_attributes": True
+    }
+
 class OrderSchema(BaseModel):
     user: int
     
