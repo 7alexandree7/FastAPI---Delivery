@@ -3,6 +3,7 @@ from models.models import User
 from dependencies import get_session
 from main import bcrypt_context
 from schema.schemas import UserSchema
+from sqlalchemy.orm import Session
 
 
 auth_route = APIRouter(prefix="/auth", tags=["auth"])
@@ -13,7 +14,7 @@ async def get_auth():
 
 
 @auth_route.post("/create_user")
-async def create_user( userSchema: UserSchema, session = Depends(get_session)):
+async def create_user( userSchema: UserSchema, session: Session = Depends(get_session)):
     user = session.query(User).filter(User.email == userSchema.email).first()
 
     if user:
