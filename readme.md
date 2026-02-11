@@ -61,7 +61,7 @@
 2. Forçar a tipagem dos dados com o python usando o Pydantic
 3. Criar uma classe com o nome de Schema no final
 4. Importar o from pydantic import BaseModel e usar o BaseModel como parametro da função
-5. Criar uma classe com o nome Config passando from_attributes = True
+5. Criar um objeto model_config passando como valor "from_attributes": True
 6. Ele vai ser interpretado como uma classe que vai ser transformada num SQL diretamente no banco de dados, ele ta conectando no nosso modelo
 7. Importar esse nosso schema, no parametro das nossas rotas
 8. Remove isso async def create_user(name: str, email: str, password: str) e chama nosso schema no lugar desses valores
@@ -114,3 +114,17 @@
 
  1. Node/Express + Mongoose/Prisma → ORM/ODM cuida da sessão/conexão. Você só chama métodos.
  2. Python + FastAPI + SQLAlchemy → você precisa criar e gerenciar a session por rota.
+
+
+# Diferença do Models para Schemas
+
+1. Model representa a estrutura da tabela no banco de dados
+2. Schema representa o formato dos dados que entram e saem da API
+3. Model utiliza SQLAlchemy (ORM).
+4. Schema utiliza Pydantic.
+5. Model é responsável por mapear dados para o banco (CRUD).
+6. Schema é responsável por validar e serializar dados da requisição e resposta.
+7. Model se comunica com o banco de dados.
+8. Schema se comunica com o cliente (JSON da API).
+9. Model = estrutura do banco.
+0. Schema = estrutura da API.
