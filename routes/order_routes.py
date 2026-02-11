@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from dependencies import get_session
+from db.session import get_session
 from schema.schemas import OrderSchema
 from sqlalchemy.orm import Session
 from models.models import Order
