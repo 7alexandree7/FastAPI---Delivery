@@ -11,3 +11,10 @@ class UserSchema(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class OrderSchema(BaseModel):
+    user: int
+    
+    model_config = {
+        "from_attributes": True
+    }
