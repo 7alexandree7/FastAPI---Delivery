@@ -39,7 +39,7 @@
 5. Fazer uma consulta no banco, para chekar se existe de fato esse usuario com o respesctivo email
 6. Se não existir o usuario, retornar => raise HTTPException(status_code=404, detail="user not found")
 7. Caso exista um usuario no bloco else. Criar um usuario
-8. Criar um token JWT
+8. Criar um token JWT / Verify password
 
 
 ## Criação de Rota De Pedido
@@ -135,7 +135,7 @@
  2. Python + FastAPI + SQLAlchemy → você precisa criar e gerenciar a session por rota.
 
 
-# Diferença do Models para Schemas
+## Diferença do Models para Schemas
 
 1. Model representa a estrutura da tabela no banco de dados
 2. Schema representa o formato dos dados que entram e saem da API
@@ -147,3 +147,21 @@
 8. Schema se comunica com o cliente (JSON da API).
 9. Model = estrutura do banco.
 0. Schema = estrutura da API.
+
+
+
+## TOKEN JWT  + Refresh token
+
+1. Criar uma pasta chamada security
+2. Criar a função dentro dessa pasta para depois exportar onde precisar
+3. Utilizar o algoritimo de criptografia "H256", Definir no .env essa variavel e pegar no main
+4. Definir mais uma variavel .env ACCESS_TOKEN_EXPIRES_MINUTES, Serve para definir o valor padrão de duração
+5. Utilizar a biblioteca jose => from jose import jwt, jwtError
+6. Utilizar a biblioteca dateTime => from dateTime import datetime, timedelta, timezone, para cuidar da parte do EXPIRE_MINUTES
+7. 1 passo expiration_date definir quando vai expirar o token expiration_date = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRES_MINUTES)
+8. Criar um dicionario com as informações que vamos codificar
+9. usar o jwt.encoded() = passando 3 argumentos, 1 - meu dicionario 2 - minha SECRET_KEY, 3- o ALGORITHM
+10. O refresh token é um token que tem a duração maior, porem nas requisições que serão feitas, sempre vamos mandar o access_token, o refresh_token é basicamente um token que existe 
+    - pra na proxima vez que ele precisar de um novo access_token  ele não precisar me dar o email e senha dele, ele vai me dar o refresh token e eu vou gerar um novo access_token
+    - quando o usuario me manda as informações de login, eu não vou gerar um unico token, vou gerar o access_token e o refresh_token
+11. Diferença do acces_token e refresh_token é a duração deles
