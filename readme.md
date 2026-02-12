@@ -194,9 +194,32 @@
 
 ## VERIFY_TOKEN
 
+1. Criar uma função verify_token, paassando como parametro o token e a session
+2. Na função que eu vou usar passar dessa forma como parametro user: User = Depends(verify_token)
+@auth_route.post("/refresh")
+async def refresh_token(user: User = Depends(verify_token)):
+    new_access_token = create_token(user.id)
+    new_refresh_token = create_token(user.id, duration_token=timedelta(days=7))
 
+    return {
+        "access_token": new_access_token,
+        "refresh_token": new_refresh_token,
+        "token_type": "Bearer",
+    }
 
-
+3. Passo 1 — FastAPI executa o Depends / Antes da rota rodar, o FastAPI executa: verify_token(...)
+4. 📌 O que acontece dentro de verify_token ?
+5. 1️⃣ oauth2_scheme pega o token do header / Ele pega automaticamente: / Authorization: Bearer SEU_TOKEN_AQUI / E extrai só o token.
+6. 2️⃣ O JWT é decodificado / dic_info = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+   . Verifica assinatura
+   . Verifica expiração
+   . Se estiver expirado → vai direto pro except JWTError
+   . Se assinatura errada → vai pro except
+   . Se estiver válido → continua
+7. 3️⃣ Pega o id do usuário do payload / id_user = int(dic_info.get("sub")) / No seu create_token, você salva assim: dic_info = { "sub": str(id_user), "exp": expiration_date } Então sub é o ID do usuário.
+8. 4️⃣ Busca o usuário no banco / user = session.query(User).filter(User.id == id_user).first() / Se não achar → 404 / Se achar → retorna o user
+9. 📌 Então o que chega na sua rota? access_token = create_token(user.id)
+10. Você está criando um novo token usando o ID do usuário.
 
 
 
