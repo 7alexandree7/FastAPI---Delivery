@@ -26,3 +26,14 @@ class OrderSchema(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+
+class OrderedItemSchema(BaseModel):
+    quantity: int
+    flavor: str
+    size: str
+    unit_price: float
+
+    model_config = {
+        "from_attributes": True
+    }
