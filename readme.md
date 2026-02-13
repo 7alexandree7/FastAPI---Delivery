@@ -56,11 +56,38 @@
      }
 
 
-## Criação de Rota De Pedido
+## Criação de Rota De Criar Pedido
 
-1. Na rota de login, vamos passar nosso email e senha, nossa API vai devolver um token, aonde com esse token eu vou usar em todas as rotas que pede que tenha um usuario logado
-2. Iremos utilizar o formato token via (JWT)
-3. Retornar um dicionario informando return { "access_token": nomeDaVariavel, "token_type": "Bearer}
+1. Definir o endpoint /order
+2. Criar uma função assincrona create_order, que recebe como parametros, nosso orderSchema, e a nossa getSession
+3. orderSchema: OrderSchema, session: Session = Depends(get_session)
+4. Adicionar um bloco try e except
+5. Dentro do try vamos criar uma new_order = Order(user=orderSchema.user)
+6. utilizar o session.add(new_user) - Coloca o objeto na fila para ser salvo.
+7.Utilizar o session.commit() - Executa o INSERT no banco - Persiste os dados
+8. Usar o session.refresh(new_order) - garante que o id vem atualizado
+9. No bloco except tipamos ele Exception as e
+10. Usamos o session.rollback() - evita salvar coisa quebrada no banc
+11. raise HTTPException(status_code=500, detail="error creating order")
+12. Para todas as rotas de pedidos adicionamos uma dependencia global de verify_token 
+13. order_route = APIRouter(prefix="/orders", tags=["orders"], dependencies=[Depends(verify_token)])
+14. Isso priva as rotas apenas para usuarios autenticados
+15. Usar como parametro da função(user: User = Depends(verify_token)) Que a dependecia verify_token, nos retorna o user
+
+
+## Criação de Rota De Cancelar Pedido
+1. Definir o endpoint  /order/cancel/{id_order}
+2. Criar uma função asyncrona recebendo uma instancia do banco de dados session: Session = Depends(get_session)
+3. Buscar com um query o pedido order = session.query(Order).filter(Order.id == order_id).first()
+4. Se não tiver pedido, raise HTTPException(status_code=404, detail="order not found")
+5. Alterar o status do order para cancelado
+6. utilizar o session.commit() para fazer as alterações no banco
+7. retornar um objeto com a primeira chave uma message, e segunda chave o pedido e as informações
+8. Nessa rota de cancelar pedido precisamos fazer um certo tratamento, para saver quem pode cancelar o pedido, apenas o usurio dono do pedio, ou usuario admin
+9. Criar nivel de acesso a rota, precisa garantir q essa rota receba como parametro o usuario que esta fazendo aquela requisição
+10. A rota ja tem o bloqueio via token, então ja temos a garantia, que o usuaio ta logado e é valido, mas precisamos saber se ele e o dono do pedido ou admion
+11. Fazer a verificação if not (user.admin or order.user != user.id):
+12. O user.id vem do "sub" do meu verify_token atraves da dependencia ele so me retorna o user.id
 
 
 ## Gerenciamento de Sessão
