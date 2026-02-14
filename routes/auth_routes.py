@@ -39,6 +39,9 @@ async def create_user( userSchema: UserSchema, session: Session = Depends(get_se
 async def login(loginSchema: LoginSchema, session: Session = Depends(get_session)):
     user = authenticate_user(loginSchema.email, loginSchema.password, session)
 
+    if not user:
+        raise HTTPException(status_code=401, detail="invalid credentials")
+
     access_token = create_token(user.id)
     refresh_token = create_token(user.id, duration_token=timedelta(days=7))
 
