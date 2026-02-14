@@ -75,6 +75,46 @@
 15. Usar como parametro da função(user: User = Depends(verify_token)) Que a dependecia verify_token, nos retorna o user
 
 
+
+## Criação de Rota De Listar Pedidos
+1. Endpoint /list
+2. Criar uma função asyncrona passando 2 dependencias, session e user
+3. Verificar se o usuario é admin
+4. Se não for admin retornar um arro com raise HTTPException
+5 - Se for admin fazer a query no banco na tabela Orders, usando o metodo all(), retornando todos os pedidos
+
+
+## Criar a funcionalidade de adicionar um Item ao nosso Pedido
+1. Criar a rota order/add-item/{order_id}
+2. Criar a função asyncrona que recebe 4 parametros
+3. order_id: int, orderedItemSchema: OrderedItemSchema, session: Session = Depends(get_session), user: User = Depends(verify_token)
+4. Fazer a query no banco na tabela Order
+5. Verificar se existe um Pedido
+6. Verificar se o usuario é o dono do pedido ou admin
+7. Criar uma variavel ordem_item = que vai receber OrderedItem() a class do meu model, passando todos os valores atravez do meu esquema
+8. Calcular o price
+9. session.add(ordem_item) para deixar ja preparado pra subir pro banco
+10. session.commit() O que de fato vai da o INSERT no banco
+11.     return {
+        "message": "Item added sucessfully",
+        "item_id": order_item.id,
+        "order_price": order.price
+    }
+
+
+## Como Calcular o Price
+. Antes de tudo isso precisamor ter acesso aos items da tabela de OrderedItem
+. Criamos uma nova coluna chamada items, que recebe  relationship("OrderedItem", cascade="all, delete")
+. Basicamente tamo atribuindo a essa tabela de Order, o poder de acessar valores de outra tabela pelo relationship + nome da tabela
+. from sqlalchemy.orm import relationship
+. O cascade
+1. Dentro do model Order
+2. Criar uma função calculate_price(self)
+3. Fazer um loop com for pra cada item em self.item
+4. armazenar dentro de self.price += item.quantity * item.unit_price
+5. retornar o self.price
+
+
 ## Criação de Rota De Cancelar Pedido
 1. Definir o endpoint  /order/cancel/{id_order}
 2. Criar uma função asyncrona recebendo uma instancia do banco de dados session: Session = Depends(get_session)
@@ -251,7 +291,7 @@ async def refresh_token(user: User = Depends(verify_token)):
 
 
 
- ## Anotações Derivadas
+## Anotações Derivadas
 
  1. Node/Express + Mongoose/Prisma → ORM/ODM cuida da sessão/conexão. Você só chama métodos.
  2. Python + FastAPI + SQLAlchemy → você precisa criar e gerenciar a session por rota.
